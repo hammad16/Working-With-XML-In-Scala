@@ -1,0 +1,156 @@
+///////////////////////////////////////////////////////
+// WORKING WITH XML
+///////////////////////////////////////////////////////
+// Writting XML Tags
+
+/* ---There is a shorthand notation for a start tag
+followed immediately by its matching end tag.
+---Simply write one tag with a slash put after the tag’s
+label. Such a tag comprises an empty element.
+e.g <pod>Three <peas/> in the </pod>
+---Start tags can have attributes attached to them.
+e.g <pod peas="3" strings="true"/> */
+
+scala> <a>
+     | Here is Some Text
+     | Here ir A TAG <atag/>
+     | </a>
+
+// Output
+
+res0: scala.xml.Elem =
+<a>
+Here is Some Text
+Here ir A TAG <atag/>
+</a>
+
+///////////////////////////////////////////////////////
+// Importan XML Classes
+/* Class Node is the abstract superclass of all
+XML node classes.
+Class Text is a node holding just text. For
+example, the “Here” part of
+<a>Here</a> is of class Text.
+Class NodeSeq holds a sequence of nodes. */
+
+
+scala> <a> {"hello"+", world"} </a>
+res0: scala.xml.Elem = <a> hello, world </a> 	// Output
+
+scala> val yearMade = 1995
+yearMade: Int = 1995 		// Output
+
+scala> <a> { if(yearMade<2000) <old> { yearMade } </old> else xml.NodeSeq.Empty } </a>
+res1: scala.xml.Elem = <a> <old> 1995 </old> </a>		// Output
+
+
+///////////////////////////////////////////////////////
+// Example of XML
+
+scala> val foo = <foo><bar type="greet">hi</bar><bar type="count">1</bar><bar type="color">yellow</bar></foo>
+foo: scala.xml.Elem = <foo><bar type="greet">hi</bar><bar type="count">1</bar><bar type="color">yellow</bar></foo>  // Output
+
+scala> foo.text
+res3: String = hi1yellow  	// Output
+
+///////////////////////////////////////////////////////
+// Taking XML apart
+/* Extracting text :
+By calling the text method on
+any XML node you retrieve all of the text within
+that node, minus any element tags. */
+
+scala> <a> Sounds <tag/> good </a>.text
+res4: String = " Sounds  good "			// Output
+
+scala> <a> input ---&gt; </a>.text
+res5: String = " input ---> "		// Output
+
+///////////////////////////////////////////////////////
+// Extracting sub-elements
+/* If you want to find a sub-element by tag name,
+simply call \ with the name of the tag:*/
+
+*/ You can do a “deep search” and look through
+sub-sub-elements, etc., by using \\ instead of
+the \ operator. */
+
+
+scala> <a><b><c>hello</c></b></a> \ "b"
+res6: scala.xml.NodeSeq = NodeSeq(<b><c>hello</c></b>)			// Output
+
+scala> <a><b><c>hello</c></b></a> \\ "c"
+res7: scala.xml.NodeSeq = NodeSeq(<c>hello</c>)			// Output
+
+///////////////////////////////////////////////////////
+// Extracting attributes
+*/ If you want to find a sub-element by tag name,
+simply call \ with the name of the tag:
+You can do a “deep search” and look through
+sub-sub-elements, etc., by using \\ instead of
+the \ operator. */
+
+scala> val neel = <employee
+     | name = "Neelkanth" rank = "1" pin ="123" />
+neel: scala.xml.Elem = <employee name="Neelkanth" rank="1" pin="123"/>		// Output
+
+scala> neel \"@name"
+res8: scala.xml.NodeSeq = Neelkanth			// Output
+
+scala> neel \"@rank"
+res9: scala.xml.NodeSeq = 1			// Output
+
+scala> neel \"@pin"
+res10: scala.xml.NodeSeq = 123			// Output
+
+
+///////////////////////////////////////////////////////
+// Runtime Representation
+
+/* XML data is represented as labeled trees.
+You can conveniently create such labeled nodes
+using standard XML syntax. */
+// Consider the following XML document:
+
+<html>
+	<head>
+		<title>Hello XHTML world</title>
+	</head>
+	<body>
+		<h1>Hello world</h1>
+		<p><a href="http://scala-lang.org/">Scala</a> talks XHTML</p>
+	</body>
+</html>
+
+// This document can be created by the following Scala program as :
+
+object XMLTest1 extends Application {
+	val page =
+		<html>
+			<head>
+				<title>Hello XHTML world</title>
+			</head>
+			<body>
+				<h1>Hello world</h1>
+				<p><a href="scala-lang.org">Scala</a> talksXHTML</p>
+			</body>
+		</html>;
+		println(page.toString())
+}
+
+// It is possible to mix Scala expressions and XML :
+
+object XMLTest2 extends Application {
+	import scala.xml._
+	val df = java.text.DateFormat.getDateInstance
+	val dateString = df.format(new java.util.Date)
+	def theDate(name: String) =
+	<dateMsg addressedTo={ name }>
+		Hello, { name }! Today is { dateString }
+	</dateMsg>;
+	println(theDate("Neelkanth Sachdeva").toString)
+}
+
+
+
+
